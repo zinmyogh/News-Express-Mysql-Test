@@ -1,0 +1,80 @@
+const dbConfig = require("../config/dbConfig");
+const user = require("../controllers/userController");
+
+uploadimages = async (req, res) => {
+  console.log(req.files);
+  let url = [];
+  req.files.forEach((i) => {
+    url.push(`http://192.168.0.106:3000/static/images/${i.originalname}`);
+  });
+  for (let i = 0; i < url.length; i++) {
+    console.log(i, url[i]);
+  }
+  res.send({
+    code: 200,
+    msg: "testing multiple images",
+    url: url,
+  });
+};
+//上传朋友圈
+postmoment = async (req, res) => {
+  let { content, images } = req.body;
+  let token = req.headers.authorization;
+  let result = await user.checkTokenGetInfo(token);
+  if (result.length) {
+    console.log("images: ", images);
+    console.log("images toString(): ", images.toString());
+    let sql = `insert into momentpost (userID, content, images ,createDate) values (?,?,?,?)`;
+    let sqlArr = [result[0].userID, content, images.toString(), new Date()];
+    let results = await dbConfig.SySqlConnect(sql, sqlArr);
+    if (results.affectedRows == 1) {
+      res.json({
+        code: 200,
+        msg: "添加朋友圈成功",
+        info: results,
+      });
+    } else {
+      res.json({
+        code: 201,
+        msg: "添加朋友圈失败！",
+      });
+    }
+  } else {
+    res.json({
+      code: 201,
+      msg: "添加朋友圈失败！",
+    });
+  }
+};
+
+//删除朋友圈
+deletemoment = async (req, res) => {
+  let { momentPostID } = req.body;
+  let token = req.headers.authorization;
+  let result = await user.checkTokenGetInfo(token);
+  if (result.length) {
+    let sql = `delete from momentpost where momentPostID = ?`;
+    let sqlArr = [momentPostID];
+    let results = await SySqlConnect(sql, sqlArr);
+    if (results.affectedRows == 1) {
+      res.json({
+        code: 200,
+        msg: `删除成功`,
+      });
+    }
+    res.json({
+      code: 200,
+      msg: "删除成功",
+    });
+  } else {
+    res.json({
+      code: 201,
+      msg: "删除失败！",
+    });
+  }
+};
+
+module.exports = {
+  postmoment,
+  uploadimages,
+};
