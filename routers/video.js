@@ -6,6 +6,7 @@ const upload = require("../middlewares/upload");
 
 router.get("/getallvideo", video.fgetallvideo);
 router.get("/getvideobycategory", video.fgetvideobycategory);
+router.get("/getvideo", video.getvideo);
 router.post("/postvideo", auth(), video.postvideo);
 router.post("/deletevideo", auth(), video.deletevideo);
 

@@ -12,6 +12,7 @@ router.post(
 );
 router.get("/getallarticle", article.fgetallarticle);
 router.get("/getarticlebycategory", article.fgetarticlebycategory);
+router.get("/getarticle", article.getarticle);
 router.post("/postarticle", auth(), article.postarticle);
 router.post("/deletearticle", auth(), article.deletearticle);
 

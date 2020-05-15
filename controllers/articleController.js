@@ -1,5 +1,6 @@
 const dbConfig = require("../config/dbConfig");
 const user = require("../controllers/userController");
+const config = require("../config/dbConfig");
 
 //添加userPostID表
 let userPost = async (userID, categoryID) => {
@@ -8,20 +9,19 @@ let userPost = async (userID, categoryID) => {
   let result = await dbConfig.SySqlConnect(sql, sqlArr);
   // console.log(result);
   return result.insertId;
-  // if (result.affectedRows == 1) {
-  //   console.log(result);
-  //   return result.insertID;
-  // } else {
-  //   return false;
-  // }
 };
-
+//获取分类名称
+let getCategoryNameByID = (categoryID) => {
+  let sql = `select * from category where categoryID = ?`;
+  let sqlArr = [categoryID];
+  return dbConfig.SySqlConnect(sql, sqlArr);
+};
 //文章图片接收返回图片的Url
 articleimage = (req, res) => {
   const file = req.file;
-  console.log(file);
-  file.url = `http://192.168.0.106:3000/statics/images/${file.filename}`;
-  console.log(file.url);
+  // console.log(file);
+  file.url = `${config.imageUrl + file.filename}`;
+  // console.log(file.url);
   res.json({ code: 200, url: file.url });
 };
 
@@ -83,6 +83,36 @@ fgetarticlebycategory = async (req, res) => {
         msg: "获取失败！",
       });
     }
+  }
+};
+//获取所有个人上传的文章
+getarticle = async (req, res) => {
+  let token = req.headers.authorization;
+  const result = await user.checkTokenGetInfo(token);
+  if (result.length) {
+    let sql = `select articlepost.articlePostID, articlepost.userPostID, articlepost.userID, articlepost.caption,  articlepost.content, articlepost.cover1, articlepost.likeCount, articlepost.viewCount, date_format(createDate, '%Y-%m-%d') createDate, category.categoryName from articlepost inner JOIN category  where articlepost.categoryID = category.categoryID and userID =?`;
+    // let sql = `select articlepost.articlePostID, articlepost.caption, articlepost.categoryID, category.categoryName from category left join articlepost where articlepost.categoryID = category.categoryID`;
+    let sqlArr = [result[0].userID];
+    let results = await dbConfig.SySqlConnect(sql, sqlArr);
+    // console.log(results);
+    // console.log("getarticle results: ", results[0].categoryID);
+    if (results.length) {
+      res.json({
+        code: 200,
+        msg: "获取文章成功",
+        info: results,
+      });
+    } else {
+      res.json({
+        code: 201,
+        msg: "获取文章失败！",
+      });
+    }
+  } else {
+    res.json({
+      code: 201,
+      msg: "用户不存在！",
+    });
   }
 };
 
@@ -167,6 +197,7 @@ module.exports = {
   articleimage,
   fgetallarticle,
   fgetarticlebycategory,
+  getarticle,
   postarticle,
   deletearticle,
 };

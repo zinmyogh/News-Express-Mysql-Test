@@ -172,47 +172,14 @@ adduserinfo = async (req, res) => {
     });
   }
 };
-// //添加用户信息
-// adduserinfo = async (req, res) => {
-//   let { userName, address, birthday, sex, introduction } = req.body;
-//   console.log("req.body: ", req.body);
-//   let token = req.headers.authorization;
-//   let result = await checkTokenGetInfo(token);
 
-//   console.log(result[0].userID);
-//   if (result.length != "") {
-//     let sql = `update user set userName = ?, address = ?, birthday = ?, sex = ?, introduction = ? where userID = ?`;
-//     let sqlArr = [
-//       userName,
-//       address,
-//       birthday,
-//       sex,
-//       introduction,
-//       result[0].userID,
-//     ];
-//     let results = await dbConfig.SySqlConnect(sql, sqlArr);
-//     if (results.affectedRows == 1) {
-//       let info = await getUserByuserID(result[0].userID);
-//       res.json({
-//         code: 200,
-//         msg: "上传信息成功",
-//         info: info,
-//       });
-//     } else {
-//       res.json({
-//         code: 201,
-//         msg: "上传信息失败了！",
-//       });
-//     }
-//   }
-// };
 //上传头像
 uploadprofile = async (req, res) => {
   let token = req.headers.authorization;
   // console.log("img token: ", token);
   let file = req.file;
   // console.log(file);
-  file.url = `http://192.168.0.106:3000/statics/images/${file.filename}`;
+  file.url = `${dbConfig.imageUrl + file.filename}`;
   // console.log(file.url);
   let result = await checkTokenGetInfo(token);
   // console.log("re: ", result);
@@ -240,27 +207,6 @@ uploadprofile = async (req, res) => {
   }
 };
 
-uploadimages = async (req, res) => {
-  console.log(req.files);
-  // let imgPath = [];
-  let url = [];
-  req.files.forEach((i) => {
-    // imgPath.push(i.paht);
-    // console.log("i.path: ", i.path);
-    url.push(`http://192.168.0.106:3000/static/images/${i.originalname}`);
-  });
-
-  for (let i = 0; i < url.length; i++) {
-    console.log(i, url[i]);
-  }
-
-  res.send({
-    code: 222,
-    msg: "testing",
-    url: url,
-  });
-};
-
 getuserinfo = async (req, res) => {
   let token = req.headers.authorization;
   let result = await checkTokenGetInfo(token);
@@ -277,6 +223,28 @@ getuserinfo = async (req, res) => {
     });
   }
 };
+
+// uploadimages = async (req, res) => {
+//   console.log(req.files);
+//   // let imgPath = [];
+//   let url = [];
+//   req.files.forEach((i) => {
+//     // imgPath.push(i.paht);
+//     // console.log("i.path: ", i.path);
+//     url.push(`http://192.168.0.106:3000/static/images/${i.originalname}`);
+//   });
+
+//   for (let i = 0; i < url.length; i++) {
+//     console.log(i, url[i]);
+//   }
+
+//   res.send({
+//     code: 222,
+//     msg: "testing",
+//     url: url,
+//   });
+// };
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //取随机数
 function rand(max, min) {
@@ -785,14 +753,14 @@ module.exports = {
   // uploadimages,
   getuserinfo,
 
-  sendCode,
-  codePhoneLogin,
+  // sendCode,
+  // codePhoneLogin,
 
-  editUserInfo,
-  setPassword,
-  bindEmail,
-  logout,
-  editUserImage,
-  uploadMoreImg,
-  publish,
+  // editUserInfo,
+  // setPassword,
+  // bindEmail,
+  // logout,
+  // editUserImage,
+  // uploadMoreImg,
+  // publish,
 };

@@ -41,7 +41,7 @@ fgetallvideo = async (req, res) => {
 let fgetvideoID = (categoryName) => {
   let sql = `select categoryOrder from category where categoryName = ?`;
   let sqlArr = [categoryName];
-  console.log("haha");
+  // console.log("haha");
   return dbConfig.sqlConnect(sql, sqlArr);
 };
 
@@ -71,6 +71,35 @@ fgetvideobycategory = async (req, res) => {
         msg: "获取失败！",
       });
     }
+  }
+};
+
+//获取所有个人上传的视屏
+getvideo = async (req, res) => {
+  let token = req.headers.authorization;
+  const result = await user.checkTokenGetInfo(token);
+  if (result.length) {
+    let sql = `select videopost.videoPostID, videopost.videoURL, videopost.caption, videopost.userPostID, videopost.userID, videopost.likeCount, videopost.viewCount, date_format(createDate, '%Y-%m-%d') createDate,  category.categoryName from videopost INNER JOIN category  where videopost.categoryID = category.categoryID and userID =?`;
+    let sqlArr = [result[0].userID];
+    let results = await dbConfig.SySqlConnect(sql, sqlArr);
+    // console.log(results);
+    if (results.length) {
+      res.json({
+        code: 200,
+        msg: "获取视屏成功",
+        info: results,
+      });
+    } else {
+      res.json({
+        code: 201,
+        msg: "获取视屏失败！",
+      });
+    }
+  } else {
+    res.json({
+      code: 201,
+      msg: "用户不存在！",
+    });
   }
 };
 
@@ -114,7 +143,7 @@ postvideo = async (req, res) => {
   }
 };
 
-//删除文章
+//删除视屏
 deletevideo = async (req, res) => {
   let { videoPostID } = req.body;
   let token = req.headers.authorization;
@@ -143,6 +172,7 @@ deletevideo = async (req, res) => {
 module.exports = {
   fgetallvideo,
   fgetvideobycategory,
+  getvideo,
   postvideo,
   deletevideo,
 };
