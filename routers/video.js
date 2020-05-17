@@ -8,6 +8,7 @@ router.get("/getallvideo", video.fgetallvideo);
 router.get("/getvideobycategory", video.fgetvideobycategory);
 router.get("/getvideo", video.getvideo);
 router.post("/postvideo", auth(), video.postvideo);
-router.post("/deletevideo", auth(), video.deletevideo);
+router.post("/updatevideo", auth(), video.updatevideo);
+router.delete("/deletevideo", auth(), video.deletevideo);
 
 module.exports = router;

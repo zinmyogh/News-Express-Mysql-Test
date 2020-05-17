@@ -85,10 +85,45 @@ fgetarticlebycategory = async (req, res) => {
     }
   }
 };
+
+//获取热点
+gethotarticle = async (req, res) => {
+  let sql = `select articlePostID, content, caption, likeCount from articlepost order by likeCount DESC limit 4 `;
+  const result = await dbConfig.SySqlConnect(sql);
+  res.json({
+    code: 200,
+    info: result,
+  });
+};
+
+//获取文章by分类
+getarticlebyid = async (req, res) => {
+  console.log("gg");
+  let { articlePostID } = req.body;
+  console.log("req>>>>>", req.body);
+  // console.log(result);
+  let sql = `select content, caption, date_format(createDate, '%Y-%m-%d')createDate from articlepost where articlePostID = ?`;
+  let sqlArr = [articlePostID];
+  let result = await dbConfig.SySqlConnect(sql, sqlArr);
+  if (result.length) {
+    res.json({
+      code: 200,
+      msg: "获取成功",
+      info: result,
+    });
+  } else {
+    res.json({
+      code: 201,
+      msg: "获取失败！",
+    });
+  }
+};
+
 //获取所有个人上传的文章
 getarticle = async (req, res) => {
   let token = req.headers.authorization;
   const result = await user.checkTokenGetInfo(token);
+  // console.log("check: >>>", result);
   if (result.length) {
     let sql = `select articlepost.articlePostID, articlepost.userPostID, articlepost.userID, articlepost.caption,  articlepost.content, articlepost.cover1, articlepost.likeCount, articlepost.viewCount, date_format(createDate, '%Y-%m-%d') createDate, category.categoryName from articlepost inner JOIN category  where articlepost.categoryID = category.categoryID and userID =?`;
     // let sql = `select articlepost.articlePostID, articlepost.caption, articlepost.categoryID, category.categoryName from category left join articlepost where articlepost.categoryID = category.categoryID`;
@@ -174,17 +209,18 @@ deletearticle = async (req, res) => {
   if (result.length) {
     let sql = `delete from articlepost where articlePostID = ?`;
     let sqlArr = [articlePostID];
-    let results = await SySqlConnect(sql, sqlArr);
+    let results = await dbConfig.SySqlConnect(sql, sqlArr);
     if (results.affectedRows == 1) {
       res.json({
         code: 200,
         msg: `删除成功`,
       });
+    } else {
+      res.json({
+        code: 201,
+        msg: "删除失败！",
+      });
     }
-    res.json({
-      code: 200,
-      msg: "删除成功",
-    });
   } else {
     res.json({
       code: 201,
@@ -197,6 +233,8 @@ module.exports = {
   articleimage,
   fgetallarticle,
   fgetarticlebycategory,
+  gethotarticle,
+  getarticlebyid,
   getarticle,
   postarticle,
   deletearticle,

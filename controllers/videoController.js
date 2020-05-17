@@ -142,26 +142,53 @@ postvideo = async (req, res) => {
     });
   }
 };
-
+//更新视屏caption
+updatevideo = async (req, res) => {
+  let { videoPostID, caption } = req.body;
+  let token = req.headers.authorization;
+  let result = await user.checkTokenGetInfo(token);
+  if (result.length) {
+    let sql = `update videopost set caption = ? where videoPostID = ?`;
+    let sqlArr = [caption, videoPostID];
+    let results = await dbConfig.SySqlConnect(sql, sqlArr);
+    if (results.affectedRows == 1) {
+      res.json({
+        code: 200,
+        msg: `更新成功`,
+      });
+    } else {
+      res.json({
+        code: 201,
+        msg: "更新失败！",
+      });
+    }
+  } else {
+    res.json({
+      code: 201,
+      msg: "更新失败！",
+    });
+  }
+};
 //删除视屏
 deletevideo = async (req, res) => {
   let { videoPostID } = req.body;
   let token = req.headers.authorization;
   let result = await user.checkTokenGetInfo(token);
   if (result.length) {
-    let sql = `delete from videopost where videoPostID = ?`;
+    let sql = `delete  from videopost where videoPostID = ?`;
     let sqlArr = [videoPostID];
-    let results = await SySqlConnect(sql, sqlArr);
+    let results = await dbConfig.SySqlConnect(sql, sqlArr);
     if (results.affectedRows == 1) {
       res.json({
         code: 200,
         msg: `删除成功`,
       });
+    } else {
+      res.json({
+        code: 201,
+        msg: "删除失败！",
+      });
     }
-    res.json({
-      code: 200,
-      msg: "删除成功",
-    });
   } else {
     res.json({
       code: 201,
@@ -174,5 +201,6 @@ module.exports = {
   fgetvideobycategory,
   getvideo,
   postvideo,
+  updatevideo,
   deletevideo,
 };

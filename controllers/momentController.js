@@ -83,17 +83,18 @@ deletemoment = async (req, res) => {
   if (result.length) {
     let sql = `delete from momentpost where momentPostID = ?`;
     let sqlArr = [momentPostID];
-    let results = await SySqlConnect(sql, sqlArr);
+    let results = await dbConfig.SySqlConnect(sql, sqlArr);
     if (results.affectedRows == 1) {
       res.json({
         code: 200,
         msg: `删除成功`,
       });
+    } else {
+      res.json({
+        code: 201,
+        msg: "删除失败！",
+      });
     }
-    res.json({
-      code: 200,
-      msg: "删除成功",
-    });
   } else {
     res.json({
       code: 201,
@@ -106,4 +107,5 @@ module.exports = {
   getmoment,
   postmoment,
   uploadimages,
+  deletemoment,
 };

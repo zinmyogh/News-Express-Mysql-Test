@@ -10,10 +10,12 @@ router.post(
   upload.single("file"),
   article.articleimage
 );
+router.get("/gethotarticle", article.gethotarticle);
 router.get("/getallarticle", article.fgetallarticle);
 router.get("/getarticlebycategory", article.fgetarticlebycategory);
-router.get("/getarticle", article.getarticle);
+router.post("/getarticlebyid", auth(), article.getarticlebyid);
+router.get("/getarticle", auth(), article.getarticle);
 router.post("/postarticle", auth(), article.postarticle);
-router.post("/deletearticle", auth(), article.deletearticle);
+router.delete("/deletearticle", auth(), article.deletearticle);
 
 module.exports = router;
