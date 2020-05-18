@@ -139,15 +139,41 @@ changepass = async (req, res) => {
     }
   }
 };
+let getvideolike = async (userID) => {
+  let sql = `select SUM(likeCount) as vcount from videopost where userID = ?`;
+  let sqlArr = [userID];
+  let result = await dbConfig.SySqlConnect(sql, sqlArr);
+  // console.log("v like: ", result);
+  return JSON.stringify(result);
+};
+let getmomentlike = async (userID) => {
+  let sql = `select SUM(likeCount) as mcount from momentpost where userID = ?`;
+  let sqlArr = [userID];
+  let result = await dbConfig.SySqlConnect(sql, sqlArr);
+  // console.log("m like: ", result);
+  return JSON.stringify(result);
+};
+let getarticlelike = async (userID) => {
+  let sql = `select SUM(likeCount) as acount from articlepost where userID = ?`;
+  let sqlArr = [userID];
+  let aresult = await dbConfig.SySqlConnect(sql, sqlArr);
+  return JSON.stringify(aresult);
+};
 //获取total likecount
 gettotallikecount = async (req, res) => {
   let token = req.headers.authorization;
   let result = await checkTokenGetInfo(token);
   if (result.length) {
-    let sql = `select SUM(likeCount) as count from articlepost where userID = ?`;
-    let sqlArr = [result[0].userID];
-    let results = await dbConfig.SySqlConnect(sql, sqlArr);
-    if (results != "") {
+    let vresult = await getvideolike(result[0].userID);
+    let vc = JSON.parse(vresult);
+    let mresult = await getmomentlike(result[0].userID);
+    let mc = JSON.parse(mresult);
+    let aresult = await getarticlelike(result[0].userID);
+    let ac = JSON.parse(aresult);
+    let tc = vc[0].vcount + mc[0].mcount + ac[0].acount;
+    // console.log("tc: ", tc);
+    let results = { totalcount: tc };
+    if (vresult != "" && mresult != "" && aresult != "") {
       res.json({
         code: 200,
         msg: "获取成功",
