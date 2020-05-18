@@ -139,54 +139,33 @@ changepass = async (req, res) => {
     }
   }
 };
-let getvideolike = async (userID) => {
-  let sql = `select SUM(likeCount) as vcount from videopost where userID = ?`;
-  let sqlArr = [userID];
-  let result = await dbConfig.SySqlConnect(sql, sqlArr);
-  // console.log("v like: ", result);
-  return JSON.stringify(result);
-};
-let getmomentlike = async (userID) => {
-  let sql = `select SUM(likeCount) as mcount from momentpost where userID = ?`;
-  let sqlArr = [userID];
-  let result = await dbConfig.SySqlConnect(sql, sqlArr);
-  // console.log("m like: ", result);
-  return JSON.stringify(result);
-};
-let getarticlelike = async (userID) => {
-  let sql = `select SUM(likeCount) as acount from articlepost where userID = ?`;
-  let sqlArr = [userID];
-  let aresult = await dbConfig.SySqlConnect(sql, sqlArr);
-  return JSON.stringify(aresult);
-};
-//获取total likecount
+//获取用户发布得到的总赞数
 gettotallikecount = async (req, res) => {
   let token = req.headers.authorization;
   let result = await checkTokenGetInfo(token);
-  if (result.length) {
-    let vresult = await getvideolike(result[0].userID);
-    let vc = JSON.parse(vresult);
-    let mresult = await getmomentlike(result[0].userID);
-    let mc = JSON.parse(mresult);
-    let aresult = await getarticlelike(result[0].userID);
-    let ac = JSON.parse(aresult);
-    let tc = vc[0].vcount + mc[0].mcount + ac[0].acount;
-    // console.log("tc: ", tc);
-    let results = { totalcount: tc };
-    if (vresult != "" && mresult != "" && aresult != "") {
-      res.json({
-        code: 200,
-        msg: "获取成功",
-        info: results,
-      });
-    } else {
-      res.json({
-        code: 201,
-        msg: "获取失败！",
-      });
-    }
+  let sql = `select sum(likeCount) as totalcount  from ( 
+    select sum(likeCount) as likeCount from articlepost where userID = ?
+    union all
+    select sum(likeCount) as likeCount from videopost where userID =?
+    union all
+    select sum(likeCount) as likeCount from momentpost where userID = ?
+    ) zike `;
+  let sqlArr = [result[0].userID, result[0].userID, result[0].userID];
+  let results = await dbConfig.SySqlConnect(sql, sqlArr);
+  if (results != "") {
+    res.json({
+      code: 200,
+      msg: "get tc success",
+      info: results,
+    });
+  } else {
+    res.json({
+      code: 201,
+      msg: "get tc error",
+    });
   }
 };
+
 //获取发表文章总数
 getarticlepostcount = async (req, res) => {
   let token = req.headers.authorization;
