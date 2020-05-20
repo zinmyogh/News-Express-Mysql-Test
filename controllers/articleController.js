@@ -20,7 +20,8 @@ let getCategoryNameByID = (categoryID) => {
 articleimage = (req, res) => {
   const file = req.file;
   // console.log(file);
-  file.url = `${config.imageUrl + file.filename}`;
+  // file.url = `${config.imageUrl + file.filename}`;
+  file.url = `${file.filename}`;
   // console.log(file.url);
   res.json({ code: 200, url: file.url });
 };
@@ -125,7 +126,7 @@ getarticle = async (req, res) => {
   const result = await user.checkTokenGetInfo(token);
   // console.log("check: >>>", result);
   if (result.length) {
-    let sql = `select articlepost.articlePostID, articlepost.userPostID, articlepost.userID, articlepost.caption,  articlepost.content, articlepost.cover1, articlepost.likeCount, articlepost.viewCount, date_format(createDate, '%Y-%m-%d') createDate, category.categoryName from articlepost inner JOIN category  where articlepost.categoryID = category.categoryID and userID =?`;
+    let sql = `select articlepost.articlePostID, articlepost.userPostID, articlepost.userID, articlepost.caption,  articlepost.content, articlepost.cover1, articlepost.likeCount, articlepost.viewCount, articlepost.createDate, category.categoryName from articlepost inner JOIN category  where articlepost.categoryID = category.categoryID and userID =?`;
     // let sql = `select articlepost.articlePostID, articlepost.caption, articlepost.categoryID, category.categoryName from category left join articlepost where articlepost.categoryID = category.categoryID`;
     let sqlArr = [result[0].userID];
     let results = await dbConfig.SySqlConnect(sql, sqlArr);
@@ -200,6 +201,34 @@ postarticle = async (req, res) => {
     });
   }
 };
+//更新，更改文章标题和内容
+updatearticle = async (req, res) => {
+  let { articlePostID, caption, content } = req.body;
+  let token = req.headers.authorization;
+  let result = await user.checkTokenGetInfo(token);
+  if (result.length) {
+    let sql = `update articlepost set caption = ?, content = ? where articlePostID =? `;
+    let sqlArr = [caption, content, articlePostID];
+    let results = await dbConfig.SySqlConnect(sql, sqlArr);
+    if (results.affectedRows == 1) {
+      res.json({
+        code: 200,
+        msg: "文章更新成功",
+        info: results,
+      });
+    } else {
+      res.json({
+        code: 201,
+        msg: "文章更新失败！",
+      });
+    }
+  } else {
+    res.json({
+      code: 201,
+      msg: "文章更新失败！",
+    });
+  }
+};
 
 //删除文章
 deletearticle = async (req, res) => {
@@ -237,5 +266,6 @@ module.exports = {
   getarticlebyid,
   getarticle,
   postarticle,
+  updatearticle,
   deletearticle,
 };

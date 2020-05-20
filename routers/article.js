@@ -16,6 +16,7 @@ router.get("/getarticlebycategory", article.fgetarticlebycategory);
 router.post("/getarticlebyid", auth(), article.getarticlebyid);
 router.get("/getarticle", auth(), article.getarticle);
 router.post("/postarticle", auth(), article.postarticle);
+router.put("/updatearticle", auth(), article.updatearticle);
 router.delete("/deletearticle", auth(), article.deletearticle);
 
 module.exports = router;

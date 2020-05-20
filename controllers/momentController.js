@@ -5,7 +5,8 @@ uploadimages = async (req, res) => {
   // console.log(req.files);
   let url = [];
   req.files.forEach((i) => {
-    url.push(`${dbConfig.imageUrl + i.originalname}`);
+    // url.push(`${dbConfig.imageUrl + i.originalname}`);
+    url.push(`${i.originalname}`);
   });
   for (let i = 0; i < url.length; i++) {
     // console.log(i, url[i]);

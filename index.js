@@ -23,6 +23,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 //静态资源
 app.use("/statics", express.static(path.join(__dirname, "public")));
+app.use("/dist", express.static(path.join(__dirname, "public/dist")));
 
 app.use("/user", auth(), user);
 app.use("/admin", auth(), admin);

@@ -1,9 +1,9 @@
 const mysql = require("mysql");
 module.exports = {
   secret: "ha8gou$rxdrd230",
-  host: "192.168.0.109",
+  host: "192.168.0.111",
   port: "3000",
-  imageUrl: "http://192.168.0.109:3000/statics/images/",
+  // imageUrl: "http://192.168.0.111:3000/statics/images/",
   config: {
     host: "127.0.0.1",
     user: "root",

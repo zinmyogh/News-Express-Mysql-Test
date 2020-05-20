@@ -232,7 +232,8 @@ uploadprofile = async (req, res) => {
   // console.log("img token: ", token);
   let file = req.file;
   // console.log(file);
-  file.url = `${dbConfig.imageUrl + file.filename}`;
+  // file.url = `${dbConfig.imageUrl + file.filename}`;
+  file.url = `${file.filename}`;
   // console.log(file.url);
   let result = await checkTokenGetInfo(token);
   // console.log("re: ", result);

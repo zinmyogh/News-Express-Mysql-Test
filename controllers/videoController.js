@@ -79,7 +79,7 @@ getvideo = async (req, res) => {
   let token = req.headers.authorization;
   const result = await user.checkTokenGetInfo(token);
   if (result.length) {
-    let sql = `select videopost.videoPostID, videopost.videoURL, videopost.caption, videopost.userPostID, videopost.userID, videopost.likeCount, videopost.viewCount, date_format(createDate, '%Y-%m-%d') createDate,  category.categoryName from videopost INNER JOIN category  where videopost.categoryID = category.categoryID and userID =?`;
+    let sql = `select videopost.videoPostID, videopost.videoURL, videopost.caption, videopost.userPostID, videopost.userID, videopost.likeCount, videopost.viewCount, videopost.createDate,  category.categoryName from videopost INNER JOIN category  where videopost.categoryID = category.categoryID and userID =?`;
     let sqlArr = [result[0].userID];
     let results = await dbConfig.SySqlConnect(sql, sqlArr);
     // console.log(results);
