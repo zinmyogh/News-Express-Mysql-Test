@@ -54,6 +54,7 @@ register = async (req, res) => {
 
 //用户，手机号登录
 login = async (req, res) => {
+  console.log("login", req.body);
   let phone = req.body.phone;
   let password = req.body.password;
   // console.log(phone, password);
@@ -61,7 +62,7 @@ login = async (req, res) => {
   // console.log("result: ", result);
   if (result.length == 0) {
     // console.log(result.phone);
-    res.status(201).send({
+    res.json({
       code: 201,
       msg: "该账号不存在！",
     });
@@ -72,16 +73,16 @@ login = async (req, res) => {
       // console.log("iddidid: ", result[0].userID);
       const token = jwt.sign({ userID: result[0].userID }, dbConfig.secret);
       // console.log("token : ", token);
-      res.status(200).send({
+      res.json({
         code: 200,
         msg: "登录成功",
         info: result[0],
         token: token,
       });
     } else {
-      res.status(201).send({
+      res.json({
         code: 201,
-        msg: "登录失败了！",
+        msg: "用户名或密码错误！",
       });
     }
   }
@@ -108,7 +109,7 @@ let getUserByuserID = async (userID) => {
 };
 //更改密码
 changepass = async (req, res) => {
-  console.log(req.body, req.data, req.params, req.query);
+  console.log(req.body);
   let { oldpassword, newpassword } = req.body;
   // let newpassword = req.body.newpassword;
   let token = req.headers.authorization;
@@ -278,6 +279,33 @@ getuserinfo = async (req, res) => {
   }
 };
 
+getadminimage = async (req, res) => {
+  let sql = `select max(id) as id from adminimage;`;
+  let result = await dbConfig.SySqlConnect(sql);
+  if (result.length) {
+    let sql1 = `select images from adminimage where id = ?`;
+    let sqlArr = [result[0].id];
+    let results = await dbConfig.SySqlConnect(sql1, sqlArr);
+    if (results.length) {
+      res.json({
+        code: 200,
+        msg: "获取成功",
+        info: results,
+      });
+    } else {
+      res.json({
+        code: 201,
+        msg: "获取失败!",
+      });
+    }
+  } else {
+    res.json({
+      code: 201,
+      msg: "获取失败!",
+    });
+  }
+};
+
 // uploadimages = async (req, res) => {
 //   console.log(req.files);
 //   // let imgPath = [];
@@ -311,4 +339,5 @@ module.exports = {
   adduserinfo,
   uploadprofile,
   getuserinfo,
+  getadminimage,
 };

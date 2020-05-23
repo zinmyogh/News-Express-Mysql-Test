@@ -21,6 +21,34 @@ let checkCategoryByOrder = (ctyOrder) => {
   let sqlArr = [ctyOrder];
   return dbConfig.SySqlConnect(sql, sqlArr);
 };
+uploadimages = async (req, res) => {
+  let url = [];
+  req.files.forEach((i) => {
+    url.push(`${i.originalname}`);
+  });
+  res.json({
+    code: 200,
+    url: url,
+  });
+};
+//上传轮播图
+adminimage = async (req, res) => {
+  let { images } = req.body;
+  let sql = `insert into adminimage (images, createDate) values (?,?)`;
+  let sqlArr = [images.toString(), new Date()];
+  let result = await dbConfig.SySqlConnect(sql, sqlArr);
+  if (result.affectedRows == 1) {
+    res.send({
+      code: 200,
+      msg: "上传成功",
+    });
+  } else {
+    res.send({
+      code: 201,
+      msg: "上传失败！",
+    });
+  }
+};
 
 //获取所有分类标题
 getcategory = async (req, res) => {
@@ -186,6 +214,8 @@ module.exports = {
   getallcategory,
   checkCategoryByName,
   checkCategoryByOrder,
+  uploadimages,
+  adminimage,
   getcategory,
   addcategory,
   updatecategory,

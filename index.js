@@ -10,13 +10,15 @@ const video = require("./routers/video");
 const moment = require("./routers/moment");
 const auth = require("./middlewares/auth");
 const config = require("./config/dbConfig");
-const expressWx = require("express-ws");
-const wx = require("./config/websocket");
+// const expressWx = require("express-ws");
+// const wx = require("./config/websocket");
+// expressWx(app, server);
+// app.use("/wx", wx);
 
 const app = express();
 
 const server = require("http").createServer(app);
-expressWx(app, server);
+
 app.use(cors());
 app.use(express.json());
 //post 请求
@@ -31,8 +33,6 @@ app.use("/article", article);
 app.use("/video", video);
 app.use("/moment", moment);
 app.use("/follow", follow);
-
-app.use("/wx", wx);
 
 server.listen(config.port, config.host, () => {
   console.log(server.address());

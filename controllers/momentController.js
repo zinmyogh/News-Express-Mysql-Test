@@ -8,9 +8,6 @@ uploadimages = async (req, res) => {
     // url.push(`${dbConfig.imageUrl + i.originalname}`);
     url.push(`${i.originalname}`);
   });
-  for (let i = 0; i < url.length; i++) {
-    // console.log(i, url[i]);
-  }
   res.send({
     code: 200,
     msg: "testing multiple images",
@@ -48,6 +45,8 @@ getmoment = async (req, res) => {
 //上传朋友圈
 postmoment = async (req, res) => {
   let { content, images } = req.body;
+  console.log("moment: ", req.body);
+
   let token = req.headers.authorization;
   let result = await user.checkTokenGetInfo(token);
   if (result.length) {
