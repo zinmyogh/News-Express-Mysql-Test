@@ -16,6 +16,7 @@ router.post("/changepass", user.changepass);
 router.post("/adduserinfo", user.adduserinfo);
 router.post("/uploadprofile", upload.single("file"), user.uploadprofile);
 router.get("/getadminimage", user.getadminimage);
+router.get("/getadminpublic", user.getadminpublic);
 // router.post("/uploadimages", upload.array("files"), user.uploadimages);
 // router.get("/getuserinfo", user.getuserinfo);
 

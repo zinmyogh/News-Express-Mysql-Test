@@ -305,6 +305,15 @@ getadminimage = async (req, res) => {
     });
   }
 };
+//获取公告消息
+getadminpublic = async (req, res) => {
+  let sql = `select id, publicMsg, date_format(createDate, '%m-%d')createDate from adminpublic order by id DESC limit 2 `;
+  const result = await dbConfig.SySqlConnect(sql);
+  res.json({
+    code: 200,
+    info: result,
+  });
+};
 
 // uploadimages = async (req, res) => {
 //   console.log(req.files);
@@ -340,4 +349,5 @@ module.exports = {
   uploadprofile,
   getuserinfo,
   getadminimage,
+  getadminpublic,
 };

@@ -49,6 +49,24 @@ adminimage = async (req, res) => {
     });
   }
 };
+//上传公告消息
+adminpublic = async (req, res) => {
+  let { publicMsg } = req.body;
+  let sql = `insert into adminpublic (publicMsg, createDate) values (?,?)`;
+  let sqlArr = [publicMsg, new Date()];
+  let result = await dbConfig.SySqlConnect(sql, sqlArr);
+  if (result.affectedRows == 1) {
+    res.send({
+      code: 200,
+      msg: "上传成功",
+    });
+  } else {
+    res.send({
+      code: 201,
+      msg: "上传失败！",
+    });
+  }
+};
 
 //获取所有分类标题
 getcategory = async (req, res) => {
@@ -216,6 +234,7 @@ module.exports = {
   checkCategoryByOrder,
   uploadimages,
   adminimage,
+  adminpublic,
   getcategory,
   addcategory,
   updatecategory,

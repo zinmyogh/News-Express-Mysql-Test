@@ -5,6 +5,7 @@ const admin = require("../controllers/adminController");
 
 router.post("/uploadimages", upload.array("file"), admin.uploadimages);
 router.post("/adminimage", admin.adminimage);
+router.post("/adminpublic", admin.adminpublic);
 router.get("/get/category", admin.getcategory);
 router.post("/add/category", admin.addcategory);
 router.put("/update/category", admin.updatecategory);
